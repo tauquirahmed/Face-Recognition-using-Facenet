@@ -63,4 +63,7 @@ webrtc_streamer(
     key="key",
     video_frame_callback=callback,
     media_stream_constraints={"video": True, "audio": False},
+    rtc_configuration=RTCConfiguration(
+        {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    ),
 )
