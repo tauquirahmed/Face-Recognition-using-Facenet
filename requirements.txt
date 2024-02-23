@@ -1,6 +1,6 @@
 streamlit-webrtc
 streamlit
-opencv-python-headless
+opencv-python
 mediapipe
 stow
 numpy
