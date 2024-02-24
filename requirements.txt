@@ -1,7 +1,6 @@
 streamlit-webrtc
 streamlit
-opencv-python==4.6.0.66
-pyinstaller==4.4
+opencv-python
 mediapipe
 stow
 numpy
