@@ -18,8 +18,6 @@ recognize = False
 
 capture = False
 
-if "count" not in st.session_state:
-    st.session_state.count = 0
 
 name = ""
 
@@ -35,7 +33,7 @@ with st.sidebar:
         if name:
             capture = True
             st.write("Hi " + name + " your Image has been Captured")
-            st.session_state.count += 1
+
     else:
         capture = False
 

@@ -15,7 +15,7 @@ class FaceNet:
         anchors: typing.Union[str, dict] = "faces",
         force_cpu: bool = False,
         threshold: float = 0.5,
-        color: tuple = (255, 255, 255),
+        color: tuple = (0, 255, 0),
         thickness: int = 2,
     ) -> None:
         """Object for face recognition
@@ -103,10 +103,17 @@ class FaceNet:
 
         stow.mkdir(output_dir)
 
-        for index, crop in enumerate(face_crops):
-            output_path = stow.join(output_dir, f"{str(name)}.png")
-            cv2.imwrite(output_path, crop)
-            print("Crop saved to:", output_path)
+        if name != "person":
+            for index, crop in enumerate(face_crops):
+                output_path = stow.join(output_dir, f"{str(name)}.png")
+                cv2.imwrite(output_path, crop)
+                print("Crop saved to:", output_path)
+
+        else:
+            for index, crop in enumerate(face_crops):
+                output_path = stow.join(output_dir, f"face_{str(index)}.png")
+                cv2.imwrite(output_path, crop)
+                print("Crop saved to:", output_path)
 
         self.anchors = self.load_anchors(output_dir)
 
@@ -169,6 +176,13 @@ class FaceNet:
 
         return np.dot(a, b.T) / (np.linalg.norm(a) * np.linalg.norm(b))
 
+    def save_unknown(self, image: np.ndarray, output_dir: str = "unknown_faces"):
+        stow.mkdir(output_dir)
+
+        output_path = stow.join(output_dir, f"Unknown.png")
+        cv2.imwrite(output_path, image)
+        print("Crop saved to:", output_path)
+
     def draw(self, image: np.ndarray, face_crops: dict):
         """Draw face crops on image
 
@@ -181,16 +195,31 @@ class FaceNet:
         """
         for value in face_crops.values():
             t, l, b, r = value["tlbr"]
-            cv2.rectangle(image, (l, t), (r, b), self.color, self.thickness)
-            cv2.putText(
-                image,
-                stow.name(value["name"]),
-                (l, t - 10),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.9,
-                self.color,
-                self.thickness,
-            )
+            curr_name = stow.name(value["name"])
+            if curr_name == "Unknown":
+                curr_color = tuple = (0, 0, 255)
+                cv2.rectangle(image, (l, t), (r, b), curr_color, self.thickness)
+                cv2.putText(
+                    image,
+                    curr_name,
+                    (l, t - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.9,
+                    curr_color,
+                    self.thickness,
+                )
+                self.save_unknown(image=image)
+            else:
+                cv2.rectangle(image, (l, t), (r, b), self.color, self.thickness)
+                cv2.putText(
+                    image,
+                    stow.name(value["name"]),
+                    (l, t - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.9,
+                    self.color,
+                    self.thickness,
+                )
 
         return image
 
